@@ -96,7 +96,7 @@ LOCAL_LISTEN_ADDR=
 ###   TLD_SUFFIX=local
 ### Makes your project available under xxxx.local
 ###
-TLD_SUFFIX=loc
+TLD_SUFFIX=local
 
 
 ###
@@ -137,7 +137,7 @@ NEW_GID=1000
 ###
 ### Timezone for PHP Docker container (system and php.ini)
 ###
-TIMEZONE=UTC
+TIMEZONE=Europe/Ljubljana
 
 
 
@@ -273,8 +273,8 @@ PHP_SERVER=7.4
 ### 1.2 Choose HTTPD Server Image
 ###
 #HTTPD_SERVER=apache-2.2
-#HTTPD_SERVER=apache-2.4
-HTTPD_SERVER=nginx-stable
+HTTPD_SERVER=apache-2.4
+#HTTPD_SERVER=nginx-stable
 #HTTPD_SERVER=nginx-mainline
 
 
@@ -289,9 +289,9 @@ HTTPD_SERVER=nginx-stable
 #MYSQL_SERVER=mariadb-10.0
 #MYSQL_SERVER=mariadb-10.1
 #MYSQL_SERVER=mariadb-10.2
-#MYSQL_SERVER=mariadb-10.3
+MYSQL_SERVER=mariadb-10.3
 #MYSQL_SERVER=mariadb-10.4
-MYSQL_SERVER=mariadb-10.5
+#MYSQL_SERVER=mariadb-10.5
 #MYSQL_SERVER=percona-5.5
 #MYSQL_SERVER=percona-5.6
 #MYSQL_SERVER=percona-5.7
@@ -389,9 +389,9 @@ PGSQL_SERVER=12.4
 #REDIS_SERVER=3.2-alpine
 #REDIS_SERVER=4.0
 #REDIS_SERVER=4.0-alpine
-#REDIS_SERVER=5.0
+REDIS_SERVER=5.0
 #REDIS_SERVER=5.0-alpine
-REDIS_SERVER=6.0
+#REDIS_SERVER=6.0
 #REDIS_SERVER=6.0-alpine
 #REDIS_SERVER=latest
 #REDIS_SERVER=alpine
@@ -451,7 +451,7 @@ MONGO_SERVER=4.4
 ###
 ### MOUNT_OPTIONS=,z
 ###
-MOUNT_OPTIONS=
+MOUNT_OPTIONS=,z
 
 
 ###
@@ -502,7 +502,7 @@ HOST_PATH_SSH_DIR=~/.ssh
 ###
 ### PHP_MODULES_ENABLE=ioncube, blackfire
 ###
-PHP_MODULES_ENABLE=
+PHP_MODULES_ENABLE=sqlsrv,pdo_sqlsrv
 
 
 ###
@@ -512,7 +512,7 @@ PHP_MODULES_ENABLE=
 ###
 ### PHP_MODULES_DISABLE=xdebug,imagick,swoole
 ###
-PHP_MODULES_DISABLE=oci8,PDO_OCI,pdo_sqlsrv,sqlsrv,rdkafka,swoole
+PHP_MODULES_DISABLE=oci8,PDO_OCI,rdkafka,swoole
 
 
 ###
@@ -579,7 +579,7 @@ HTTPD_VHOST_SSL_TYPE=both
 ###
 ### When changing this value, restart the devilbox.
 ###
-HTTPD_DOCROOT_DIR=htdocs
+HTTPD_DOCROOT_DIR=public
 
 
 ###
@@ -810,3 +810,38 @@ BIND_LOG_DNS_QUERIES=0
 ### <?php echo getenv('Foo'); ?> would produce: 'some value'
 ###
 #Foo=some value
+
+CI_ENV=development
+
+################################################################################
+###
+### RabbitMQ
+###
+################################################################################
+# RabbitMQ version to choose
+#RABBIT_SERVER=3.6
+#RABBIT_SERVER=3.6-management
+#RABBIT_SERVER=3.7
+#RABBIT_SERVER=3.7-management
+RABBIT_SERVER=3.8-management
+#RABBIT_SERVER=latest
+#RABBIT_SERVER=management
+
+RABBIT_DEFAULT_VHOST=my_vhost
+RABBIT_DEFAULT_USER=guest
+RABBIT_DEFAULT_PASS=guest
+
+HOST_PORT_RABBIT=5672
+HOST_PORT_RABBIT_MGMT=15672
+
+################################################################################
+###
+### Ngrok
+###
+################################################################################
+HOST_PORT_NGROK=4040
+# Share project1.local over the internet
+NGROK_HTTP_TUNNELS=sdlx.local:httpd:80
+# No license token specified
+NGROK_AUTHTOKEN=
+NGROK_REGION=eu

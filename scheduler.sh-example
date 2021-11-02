@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Initialize
+DEVILBOX_DIR=$(dirname $0);
+
+cd $DEVILBOX_DIR || (echo "ERROR: Could not change directory to $DEVILBOX_DIR!"; exit 1);
+
+# Example project site entry - replace {project_name} and {site_id} tags with actual values
+# /usr/local/bin/docker-compose exec -T --user devilbox php php -f /shared/httpd/{project_name}/public/backend.php queue/tasks/schedule --site_id {site_id};

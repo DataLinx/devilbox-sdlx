@@ -23,9 +23,6 @@
 # Ignore Certificate Authority
 /ca/*
 
-# Ignore compose override file
-/docker-compose.override.yml
-
 # Ignore logs
 /log/apache-2.2/*
 /log/apache-2.4/*
@@ -115,7 +112,6 @@
 /cfg/php-startup-7.1/*.sh
 /cfg/php-startup-7.2/*.sh
 /cfg/php-startup-7.3/*.sh
-/cfg/php-startup-7.4/*.sh
 /cfg/php-startup-8.0/*.sh
 /cfg/php-startup-8.1/*.sh
 
@@ -233,3 +229,8 @@ $RECYCLE.BIN/
 
 ###### VS Code ######
 /.vscode
+
+######################################
+# SDLX
+######################################
+scheduler.sh
