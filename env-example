@@ -28,10 +28,12 @@
 ### Show all executed commands in each
 ### docker image during docker-compose up?
 ###
-### 0: Quiet
-### 1: Verbose
-### 2: More verbose
-DEBUG_COMPOSE_ENTRYPOINT=2
+### 0: Errors
+### 1: Errors, Warnings
+### 2: Errors, Warnings, Infos  (Recommended)
+### 3: Errors, Warnings, Infos, Debug
+### 4: Errors, Warnings, Infos, Debug, Trace
+DEBUG_ENTRYPOINT=2
 
 
 ###
@@ -88,17 +90,20 @@ LOCAL_LISTEN_ADDR=
 ###
 ### Note: In addition to period or dot character ('.'), only ALPHA ([a-zA-Z]+) characters are supported.
 ###       Mac users should not use the .local TLD, as this will not resolve properly due Apple's
-###         use of Multicast DNS.##
+###       use of Multicast DNS.
+###
+### Note: If you use 'dvl.to' then there is no need for additional DNS as this always points
+###       to 127.0.0.1 by default.
 ###
 ### Example:
 ###   TLD_SUFFIX=loc
-### Makes your project available under xxxx.loc
+### Makes your project available under <project>.loc
 ###
 ### Example:
 ###   TLD_SUFFIX=local
-### Makes your project available under xxxx.local
+### Makes your project available under <project>.local
 ###
-TLD_SUFFIX=local
+TLD_SUFFIX=dvl.to
 
 
 ###
@@ -139,7 +144,7 @@ NEW_GID=1000
 ###
 ### Timezone for PHP Docker container (system and php.ini)
 ###
-TIMEZONE=Europe/Ljubljana
+TIMEZONE=UTC
 
 
 
@@ -236,6 +241,12 @@ DEVILBOX_VENDOR_PHPMYADMIN_AUTOLOGIN=1
 ###
 DEVILBOX_VENDOR_PHPPGADMIN_AUTOLOGIN=1
 
+###
+### HTTPD Supvervisord management
+###
+DEVILBOX_HTTPD_MGMT_USER=supervisord
+DEVILBOX_HTTPD_MGMT_PASS=mypassword
+
 
 
 ################################################################################
@@ -282,8 +293,8 @@ PHP_SERVER=8.1
 HTTPD_FLAVOUR=alpine
 
 #HTTPD_SERVER=apache-2.2
-HTTPD_SERVER=apache-2.4
-#HTTPD_SERVER=nginx-stable
+#HTTPD_SERVER=apache-2.4
+HTTPD_SERVER=nginx-stable
 #HTTPD_SERVER=nginx-mainline
 
 
@@ -302,12 +313,14 @@ HTTPD_SERVER=apache-2.4
 #MYSQL_SERVER=mariadb-10.0
 #MYSQL_SERVER=mariadb-10.1
 #MYSQL_SERVER=mariadb-10.2
-MYSQL_SERVER=mariadb-10.3
+#MYSQL_SERVER=mariadb-10.3
 #MYSQL_SERVER=mariadb-10.4
 #MYSQL_SERVER=mariadb-10.5
-#MYSQL_SERVER=mariadb-10.6
+MYSQL_SERVER=mariadb-10.6
 #MYSQL_SERVER=mariadb-10.7
 #MYSQL_SERVER=mariadb-10.8
+#MYSQL_SERVER=mariadb-10.9
+#MYSQL_SERVER=mariadb-10.10
 
 
 ###
@@ -346,6 +359,8 @@ MYSQL_SERVER=mariadb-10.3
 #PGSQL_SERVER=13-alpine
 #PGSQL_SERVER=14
 PGSQL_SERVER=14-alpine
+#PGSQL_SERVER=15
+#PGSQL_SERVER=15-alpine
 #PGSQL_SERVER=latest
 #PGSQL_SERVER=alpine
 
@@ -369,12 +384,14 @@ PGSQL_SERVER=14-alpine
 #REDIS_SERVER=3.2-alpine
 #REDIS_SERVER=4.0
 #REDIS_SERVER=4.0-alpine
-REDIS_SERVER=5.0
+#REDIS_SERVER=5.0
 #REDIS_SERVER=5.0-alpine
 #REDIS_SERVER=6.0
 #REDIS_SERVER=6.0-alpine
 #REDIS_SERVER=6.2
-#REDIS_SERVER=6.2-alpine
+REDIS_SERVER=6.2-alpine
+#REDIS_SERVER=7.0
+#REDIS_SERVER=7.0-alpine
 #REDIS_SERVER=latest
 #REDIS_SERVER=alpine
 
@@ -448,7 +465,7 @@ MONGO_SERVER=5.0
 ###
 ### MOUNT_OPTIONS=,z
 ###
-MOUNT_OPTIONS=,z
+MOUNT_OPTIONS=
 
 
 ###
@@ -499,7 +516,7 @@ HOST_PATH_SSH_DIR=~/.ssh
 ###
 ### PHP_MODULES_ENABLE=ioncube, blackfire
 ###
-PHP_MODULES_ENABLE=sqlsrv,pdo_sqlsrv
+PHP_MODULES_ENABLE=
 
 
 ###
@@ -509,7 +526,7 @@ PHP_MODULES_ENABLE=sqlsrv,pdo_sqlsrv
 ###
 ### PHP_MODULES_DISABLE=xdebug,imagick,swoole
 ###
-PHP_MODULES_DISABLE=oci8,PDO_OCI,rdkafka,swoole
+PHP_MODULES_DISABLE=oci8,PDO_OCI,pdo_sqlsrv,sqlsrv,rdkafka,swoole,psr,phalcon
 
 
 ###
@@ -588,7 +605,7 @@ HTTPD_VHOST_SSL_TYPE=both
 ###
 ### When changing this value, restart the devilbox.
 ###
-HTTPD_DOCROOT_DIR=public
+HTTPD_DOCROOT_DIR=htdocs
 
 
 ###
@@ -603,13 +620,16 @@ HTTPD_TEMPLATE_DIR=.devilbox
 
 
 ###
-### Webserver timeout (in seconds) to upstream PHP-FPM server
+### Remote (Upstream) Backend Timeout
 ###
-### This value should be greater than PHP's max_execution_time,
-### otherwise the php script could still run and the webserver will
-### simply drop the connection before getting an answer by PHP.
+### This setting specifies the Timeout for a remote Backend server,
+### such as PHP-FPM or a Reverse Proxy.
 ###
-HTTPD_TIMEOUT_TO_PHP_FPM=180
+### As for PHP, keep in mind that this value should be greater than
+### PHP's max_execution_time,otherwise the php script could still
+### run and the webserver will simply drop the connection before getting an answer by PHP.
+###
+HTTPD_BACKEND_TIMEOUT=180
 
 
 ###
@@ -819,38 +839,3 @@ BIND_LOG_DNS_QUERIES=0
 ### <?php echo getenv('Foo'); ?> would produce: 'some value'
 ###
 #Foo=some value
-
-CI_ENV=development
-
-################################################################################
-###
-### RabbitMQ
-###
-################################################################################
-# RabbitMQ version to choose
-#RABBIT_SERVER=3.6
-#RABBIT_SERVER=3.6-management
-#RABBIT_SERVER=3.7
-#RABBIT_SERVER=3.7-management
-RABBIT_SERVER=3.8-management
-#RABBIT_SERVER=latest
-#RABBIT_SERVER=management
-
-RABBIT_DEFAULT_VHOST=my_vhost
-RABBIT_DEFAULT_USER=guest
-RABBIT_DEFAULT_PASS=guest
-
-HOST_PORT_RABBIT=5672
-HOST_PORT_RABBIT_MGMT=15672
-
-################################################################################
-###
-### Ngrok
-###
-################################################################################
-HOST_PORT_NGROK=4040
-# Share project1.local over the internet
-NGROK_HTTP_TUNNELS=sdlx.local:httpd:80
-# No license token specified
-NGROK_AUTHTOKEN=
-NGROK_REGION=eu
